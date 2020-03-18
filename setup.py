@@ -15,13 +15,8 @@ setup(
         'resampy',
         'pystoi',
         'museval',
-        'gammatone @ git+https://github.com/detly/gammatone',
-        'pypesq @ git+https://github.com/vBaiCai/python-pesq',
-        'srmrpy @ git+https://github.com/jfsantos/SRMRpy',
+        'tensorflow==2.0.0',
+        'librosa'
     ],
-    extras_require={
-        'cpu': ['tensorflow==2.0.0', 'librosa'],
-        'gpu': ['tensorflow-gpu==2.0.0', 'librosa'],
-    },
     include_package_data=True
 )
