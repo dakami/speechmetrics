@@ -42,12 +42,12 @@ class MOSNet(Metric):
         self.HOP_LENGTH = 256
         self.WIN_LENGTH = 512
 
-        try:
-           self.model = tf.keras.models.load_model("/tmp/model")
-           print("got cached")
-           return
-        except:
-           pass
+        #try:
+        #   self.model = tf.keras.models.load_model("/tmp/model")
+        #   print("got cached")
+        #   return
+        #except:
+        #   pass
 
         _input = keras.Input(shape=(None, 257))
 
@@ -122,8 +122,8 @@ class MOSNet(Metric):
         #tflite_model = converter.convert()
         #tf.saved_model.save(self.model, "./models")
         self.model.compile()
-        tf.keras.models.save_model(self.model, "/tmp/model")
-        print("saved")
+        #tf.keras.models.save_model(self.model, "/tmp/model")
+        #print("saved")
 
 
 
