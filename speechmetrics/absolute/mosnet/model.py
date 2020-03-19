@@ -42,12 +42,15 @@ class MOSNet(Metric):
         self.HOP_LENGTH = 256
         self.WIN_LENGTH = 512
 
-        #try:
-        #   self.model = tf.keras.models.load_model("/tmp/model")
-        #   print("got cached")
-        #   return
-        #except:
-        #   pass
+        pre_trained_dir = os.path.dirname(__file__)
+        try:
+           self.model = tf.keras.models.load_model(os.path.join(pre_trained_dir, "keras-model"))
+           #self.model = tf.keras.models.load_model("keras-model")
+           print("got cached")
+           return
+        except:
+           print("no cache")
+           pass
 
         _input = keras.Input(shape=(None, 257))
 
@@ -104,7 +107,6 @@ class MOSNet(Metric):
 
         self.model = Model(outputs=[average_score, frame_score], inputs=_input)
         # weights are in the directory of this file
-        pre_trained_dir = os.path.dirname(__file__)
 
         # load pre-trained weights. CNN_BLSTM is reported as best
         self.model.load_weights(os.path.join(pre_trained_dir, 'cnn_blstm.h5'))
@@ -122,7 +124,7 @@ class MOSNet(Metric):
         #tflite_model = converter.convert()
         #tf.saved_model.save(self.model, "./models")
         self.model.compile()
-        #tf.keras.models.save_model(self.model, "/tmp/model")
+        #tf.keras.models.save_model(self.model, os.path.join(pre_trained_dir, "keras-model"))
         #print("saved")
 
 
