@@ -1,0 +1,10 @@
+backoff
+numpy
+scipy
+tqdm
+resampy
+pystoi
+museval
+tf-nightly
+librosa
+
