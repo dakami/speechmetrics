@@ -9,12 +9,12 @@ import scipy
 import numpy as np
 import os
 from ... import Metric
-import hickle
-import cloudpickle
-import dill
+#import hickle
+#import cloudpickle
+#import dill
 
-from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
-import keras2onnx
+#from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+#import keras2onnx
 
 # prevent TF warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -24,7 +24,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 #from tensorrt.parsers import uffparser
 #from tensorrt import UffParser
 #import uff
-import deepdish
+#import deepdish
 #import snoop
 
 class MOSNet(Metric):
@@ -101,7 +101,7 @@ class MOSNet(Metric):
 
         frame_score = TimeDistributed(Dense(1), name='frame')(dense1)
         import warnings
-
+#
         average_score = layers.GlobalAveragePooling1D(name='avg')(frame_score)
 
 
