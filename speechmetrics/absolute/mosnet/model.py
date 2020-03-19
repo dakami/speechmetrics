@@ -1,3 +1,4 @@
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model, layers
 from tensorflow.keras.layers import Dense, Dropout, Conv2D
@@ -8,12 +9,26 @@ import scipy
 import numpy as np
 import os
 from ... import Metric
+import hickle
+import cloudpickle
+import dill
+
+from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+import keras2onnx
 
 # prevent TF warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
+#import tensorrt as trt
+#from tensorrt.parsers import uffparser
+#from tensorrt import UffParser
+#import uff
+import deepdish
+import snoop
+
 class MOSNet(Metric):
+    @snoop
     def __init__(self, window, hop=None):
         super(MOSNet, self).__init__(name='MOSNet', window=window, hop=hop)
 
@@ -26,6 +41,13 @@ class MOSNet(Metric):
         self.SGRAM_DIM = self.FFT_SIZE // 2 + 1
         self.HOP_LENGTH = 256
         self.WIN_LENGTH = 512
+
+        try:
+           self.model = tf.keras.models.load_model("/tmp/model")
+           print("got cached")
+           return
+        except:
+           pass
 
         _input = keras.Input(shape=(None, 257))
 
@@ -79,13 +101,32 @@ class MOSNet(Metric):
 
         average_score = layers.GlobalAveragePooling1D(name='avg')(frame_score)
 
-        self.model = Model(outputs=[average_score, frame_score], inputs=_input)
 
+        self.model = Model(outputs=[average_score, frame_score], inputs=_input)
         # weights are in the directory of this file
         pre_trained_dir = os.path.dirname(__file__)
 
         # load pre-trained weights. CNN_BLSTM is reported as best
         self.model.load_weights(os.path.join(pre_trained_dir, 'cnn_blstm.h5'))
+
+        #temp_model_file = 'model.onnx'
+        #keras2onnx.convert_keras(self.model, "mosnet")
+        #tf.saved_model.save(self.model, "./models/")
+        #dill.dump(self.model, "test.cloudpickle")
+        #uff_model = uff.from_tensorflow(self.model, ['avg'])
+        #deepdish.io.save('test.h5', self.model)
+        #converter = tf.lite.TFLiteConverter.from_keras_model(self.model)
+        #converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        #converter.target_spec.supported_types = [tf.lite.constants.FLOAT16]
+
+        #tflite_model = converter.convert()
+        #tf.saved_model.save(self.model, "./models")
+        self.model.compile()
+        tf.keras.models.save_model(self.model, "/tmp/model")
+        print("saved")
+
+
+
 
     def test_window(self, audios, rate):
         # stft. D: (1+n_fft//2, T)
