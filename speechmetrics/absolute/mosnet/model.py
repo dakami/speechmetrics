@@ -25,10 +25,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 #from tensorrt import UffParser
 #import uff
 import deepdish
-import snoop
+#import snoop
 
 class MOSNet(Metric):
-    @snoop
+    #@snoop
     def __init__(self, window, hop=None):
         super(MOSNet, self).__init__(name='MOSNet', window=window, hop=hop)
 
