@@ -15,7 +15,7 @@ setup(
         'resampy',
         'pystoi',
         'museval',
-        'tensorflow==2.2.0rc0',
+        'tf-nightly',
         'librosa'
     ],
     include_package_data=True
