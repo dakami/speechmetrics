@@ -5,5 +5,5 @@ tqdm
 resampy
 pystoi
 museval
-tensorflow
+tensorflow==2.2.0rc0
 librosa
