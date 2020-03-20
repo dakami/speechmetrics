@@ -44,7 +44,7 @@ class MOSNet(Metric):
 
         pre_trained_dir = os.path.dirname(__file__)
         try:
-           self.model = tf.keras.models.load_model(os.path.join(pre_trained_dir, "keras-model.h5"))
+           self.model = tf.keras.models.load_model(os.path.join(pre_trained_dir, "keras-model.h5", compile=False)
            #self.model = tf.keras.models.load_model("keras-model")
            print("got cached")
            return
