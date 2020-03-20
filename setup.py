@@ -15,7 +15,7 @@ setup(
         'resampy',
         'pystoi',
         'museval',
-        'tensorflow==2.2.0rc1',
+        'tf-nightly',
         'librosa'
     ],
     extras_require={
