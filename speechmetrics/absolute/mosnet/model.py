@@ -1,5 +1,5 @@
-import tensorflow as tf
 from tensorflow import keras
+import tensorflow as tf
 from tensorflow.keras import Model, layers
 from tensorflow.keras.layers import Dense, Dropout, Conv2D
 from tensorflow.keras.layers import LSTM, TimeDistributed, Bidirectional
@@ -9,26 +9,21 @@ import scipy
 import numpy as np
 import os
 from ... import Metric
-#import hickle
-#import cloudpickle
-#import dill
-
-#from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
-#import keras2onnx
+import snoop
 
 # prevent TF warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+class dotdict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
-#import tensorrt as trt
-#from tensorrt.parsers import uffparser
-#from tensorrt import UffParser
-#import uff
-#import deepdish
-#import snoop
+
 
 class MOSNet(Metric):
-    #@snoop
+    @snoop
     def __init__(self, window, hop=None):
         super(MOSNet, self).__init__(name='MOSNet', window=window, hop=hop)
 
@@ -41,20 +36,36 @@ class MOSNet(Metric):
         self.SGRAM_DIM = self.FFT_SIZE // 2 + 1
         self.HOP_LENGTH = 256
         self.WIN_LENGTH = 512
-
+        self.model = dotdict({'predict': None})
         pre_trained_dir = os.path.dirname(__file__)
+
         try:
-           self.model = tf.keras.models.load_model(os.path.join(pre_trained_dir, "keras-model.h5"), compile=False)
-           #self.model = tf.keras.models.load_model("keras-model")
-           print("got cached")
-           return
-        except:
-           print("no cache")
-           pass
+            tflite_model=open(os.path.join(pre_trained_dir, 'mosnet.tflite'), "rb").read()
+            #converter = tf.lite.TFLiteConverter.from_keras_model(self.model)
+            ##converter.optimizations = [tf.lite.Optimize.DEFAULT]
+            #tflite_model = converter.convert()
+            #open(os.path.join(pre_trained_dir, 'mosnet.tflite'), "wb").write(tflite_model)
+        
+            self.interpreter = tf.lite.Interpreter(model_content=tflite_model)
+            self.interpreter.allocate_tensors()
+            self.input_details = self.interpreter.get_input_details()
+            self.output_details = self.interpreter.get_output_details()
+            self.input_shape = self.input_details[0]['shape']
+            def predict(mag,verbose,batch_size):
+              self.interpreter.resize_tensor_input(self.input_details[0]['index'], mag.shape)
+              self.interpreter.allocate_tensors()
+              self.interpreter.set_tensor(self.input_details[0]['index'], mag)
+              self.interpreter.invoke()
+              return self.interpreter.get_tensor(self.output_details[0]['index'])
+            self.model.predict = predict
+            return
+        except: raise
+           
 
-        _input = keras.Input(shape=(None, 257))
 
-        re_input = layers.Reshape((-1, 257, 1), input_shape=(-1, 257))(_input)
+        _input = keras.Input(shape=(None,257)) #shape=(0, 257))
+
+        re_input = layers.Reshape((-1, 257, 1), input_shape=(None,257))(_input)
 
         # CNN
         conv1 = (Conv2D(16, (3, 3), strides=(1, 1), activation='relu',
@@ -101,34 +112,15 @@ class MOSNet(Metric):
 
         frame_score = TimeDistributed(Dense(1), name='frame')(dense1)
         import warnings
-#
+
         average_score = layers.GlobalAveragePooling1D(name='avg')(frame_score)
 
-
         self.model = Model(outputs=[average_score, frame_score], inputs=_input)
+
         # weights are in the directory of this file
 
         # load pre-trained weights. CNN_BLSTM is reported as best
         self.model.load_weights(os.path.join(pre_trained_dir, 'cnn_blstm.h5'))
-
-        #temp_model_file = 'model.onnx'
-        #keras2onnx.convert_keras(self.model, "mosnet")
-        #tf.saved_model.save(self.model, "./models/")
-        #dill.dump(self.model, "test.cloudpickle")
-        #uff_model = uff.from_tensorflow(self.model, ['avg'])
-        #deepdish.io.save('test.h5', self.model)
-        #converter = tf.lite.TFLiteConverter.from_keras_model(self.model)
-        #converter.optimizations = [tf.lite.Optimize.DEFAULT]
-        #converter.target_spec.supported_types = [tf.lite.constants.FLOAT16]
-
-        #tflite_model = converter.convert()
-        #tf.saved_model.save(self.model, "./models")
-        self.model.compile()
-        #tf.keras.models.save_model(self.model, os.path.join(pre_trained_dir, "keras-model"))
-        #print("saved")
-
-
-
 
     def test_window(self, audios, rate):
         # stft. D: (1+n_fft//2, T)
@@ -144,7 +136,8 @@ class MOSNet(Metric):
 
         # shape in (T, 1+n_fft/2)
         mag = np.transpose(mag.astype(np.float32))
+        
 
         # now call the actual MOSnet
         return {'mosnet':
-                self.model.predict(mag[None, ...], verbose=0, batch_size=1)[0]}
+                self.model.predict(mag.reshape(1,-1,257), verbose=0, batch_size=1)[0]}
