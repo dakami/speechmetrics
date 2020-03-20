@@ -1,0 +1,9 @@
+backoff
+numpy
+scipy
+tqdm
+resampy
+pystoi
+museval
+tensorflow
+librosa
