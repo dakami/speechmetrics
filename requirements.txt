@@ -1,3 +1,4 @@
+tensorflow==2.2.0rc0
 backoff
 numpy
 scipy
@@ -5,5 +6,4 @@ tqdm
 resampy
 pystoi
 museval
-tensorflow==2.2.0rc0
 librosa
