@@ -15,9 +15,10 @@ setup(
         'resampy',
         'pystoi',
         'museval',
+        'https://github.com/inoryy/tensorflow-optimized-wheels/releases/download/v2.1.0/tensorflow-2.1.0-cp37-cp37m-linux_x86_64.whl',
+        'librosa'
     ],
     extras_require={
-        'cpu': ['https://github.com/inoryy/tensorflow-optimized-wheels/releases/download/v2.1.0/tensorflow-2.1.0-cp37-cp37m-linux_x86_64.whl', 'librosa'],
         'gpu': ['tensorflow-gpu==2.0.0', 'librosa'],
     },
     include_package_data=True
