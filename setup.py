@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="speechmetrics",
-    version="1.0",
+    version="1.0.1dmk",
     packages=find_packages(),
 
     install_requires=[
