@@ -15,7 +15,7 @@ setup(
         'resampy',
         'pystoi',
         'museval',
-        'librosa'
+        'librosa',
         'lazy_import',
         'snoop'
     ],
