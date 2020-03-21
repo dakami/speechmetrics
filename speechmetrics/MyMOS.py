@@ -1,4 +1,4 @@
-import lazy_import
+#import lazy_import
 #lazy_import.lazy_module("numpy")
 #lazy_import.lazy_module("librosa")
 #lazy_import.lazy_module("scipy.io.wavfile")
