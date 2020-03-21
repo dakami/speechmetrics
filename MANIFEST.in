@@ -1,4 +1,6 @@
 include examples/data/*
 include speechmetrics/absolute/mosnet/*.h5
 include speechmetrics/absolute/mosnet/*.tflite
+include speechmetrics/*tflite
+
 
