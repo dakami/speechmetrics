@@ -16,6 +16,8 @@ setup(
         'pystoi',
         'museval',
         'librosa'
+        'lazy_import',
+        'snoop'
     ],
     extras_require={
         'gpu': ['tensorflow-gpu==2.0.0', 'librosa'],
