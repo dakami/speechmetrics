@@ -15,7 +15,6 @@ setup(
         'resampy',
         'pystoi',
         'museval',
-        'tf-nightly-cpu',
         'librosa'
     ],
     extras_require={
