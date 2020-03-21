@@ -17,8 +17,8 @@ setup(
         'museval',
         'librosa',
         'lazy_import',
-        'tf-nightly@https://storage.cloud.google.com/dakami-canyouhearme-no/tf_nightly-2.1.0-cp37-cp37m-linux_x86_64.whl',
-        'tflite_runtime@https://storage.cloud.google.com/dakami-canyouhearme-no/tflite_runtime-2.1.0-cp37-cp37m-linux_x86_64.whl',
+        'tf-nightly@https://storage.googleapis.com/dakami-canyouhearme-no/tf_nightly-2.1.0-cp37-cp37m-linux_x86_64.whl',
+        'tflite_runtime@https://storage.googleapis.com/dakami-canyouhearme-no/tflite_runtime-2.1.0-cp37-cp37m-linux_x86_64.whl',
         'snoop'
     ],
     extras_require={
